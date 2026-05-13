@@ -19,6 +19,8 @@ const auth = (req, res, next) => {
           createdBy: "hoidanit",
         };
         console.log(">>> check token: ", decoded);
+    const white_lists = ["/", "/register", "/login", "/forgot-password"];
+    if (white_lists.find(item => '/v1/api' + item === req.originalUrl)) {
         next();
       } catch (error) {
         return res.status(401).json({
