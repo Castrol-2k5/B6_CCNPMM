@@ -1,46 +1,46 @@
-import React, { useContext, useState } from 'react';
+import React, { useState } from 'react';
 import { UsergroupAddOutlined, HomeOutlined, SettingOutlined } from '@ant-design/icons';
 import { Menu } from 'antd';
 import { Link, useNavigate } from 'react-router-dom';
-import { AuthContext } from '../context/auth.context';
+import { useDispatch, useSelector } from 'react-redux';
+import { logout } from '../../store/authSlice';
 
 const Header = () => {
 
     const navigate = useNavigate();
-    const { auth, setAuth } = useContext(AuthContext);
-    console.log(">>> check auth: ", auth)
+    const dispatch = useDispatch();
+    const { isAuthenticated, user } = useSelector((state) => state.auth);
     const items = [
         {
             label: <Link to={"/"}>Home Page</Link>,
             key: 'home',
             icon: <HomeOutlined />,
         },
-        ...(auth.isAuthenticated ? [{
+        ...(isAuthenticated ? [{
             label: <Link to={"/user"}>Users</Link>,
             key: 'user',
             icon: <UsergroupAddOutlined />,
         }] : []),
 
         {
-            label: `Welcome ${auth?.user?.email ?? ""}`,
+            label: `Welcome ${user?.email ?? ""}`,
             key: 'SubMenu',
             icon: <SettingOutlined />,
             children: [
-                ...(auth.isAuthenticated ? [{
-                    label: <span onClick={() => {
-                        localStorage.clear("access_token");
-                        setCurrent("home");
-                        setAuth({
-                            isAuthenticated: false,
-                            user: {
-                                email: "",
-                                name: ""
-                            }
-                        })
-                        navigate("/");
-                    }}>Đăng xuất</span>,
-                    key: 'logout',
-                }] : [
+                ...(isAuthenticated ? [
+                    {
+                        label: <Link to={"/profile"}>Hồ sơ</Link>,
+                        key: 'profile',
+                    },
+                    {
+                        label: <span onClick={() => {
+                            setCurrent("home");
+                            dispatch(logout());
+                            navigate("/");
+                        }}>Đăng xuất</span>,
+                        key: 'logout',
+                    }
+                ] : [
                     {
                         label: <Link to={"/login"}>Đăng nhập</Link>,
                         key: 'login',
