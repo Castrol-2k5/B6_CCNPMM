@@ -88,6 +88,28 @@ const getUserService = async () => {
     }
 }
 
+const forgotPasswordService = async (email) => {
+    try {
+        const user = await User.findOne({ email });
+        if (!user) {
+            return {
+                EC: 1,
+                EM: "Email khong ton tai"
+            };
+        }
+        return {
+            EC: 0,
+            EM: "Yeu cau khoi phuc da duoc ghi nhan"
+        };
+    } catch (error) {
+        console.log(error);
+        return {
+            EC: 2,
+            EM: "Co loi xay ra"
+        };
+    }
+}
+
 module.exports = {
-    createUserService, loginService, getUserService
+    createUserService, loginService, getUserService, forgotPasswordService
 }

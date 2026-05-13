@@ -1,102 +1,95 @@
-import React from 'react';
-import { Button, Col, Divider, Form, Input, notification, Row } from 'antd';
-import { createUserApi } from '../util/api';
-import { Link, useNavigate } from 'react-router-dom';
-import { ArrowLeftOutlined } from '@ant-design/icons';
+import React, { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import AuthLayout from "../components/auth/AuthLayout";
+import Input from "../components/ui/Input";
+import Button from "../components/ui/Button";
+import { registerThunk } from "../Redux/authSlice";
 
 const RegisterPage = () => {
     const navigate = useNavigate();
+    const dispatch = useDispatch();
+    const { loading, error } = useSelector((state) => state.auth);
+    const [formState, setFormState] = useState({
+        name: "",
+        email: "",
+        password: "",
+    });
+    const [localError, setLocalError] = useState("");
 
-    const onFinish = async (values) => {
-        const { name, email, password } = values;
+    const handleChange = (event) => {
+        const { name, value } = event.target;
+        setFormState((prev) => ({ ...prev, [name]: value }));
+    };
 
-        const res = await createUserApi(name, email, password);
-
-        if (res) {
-            notification.success({
-                message: "CREATE USER",
-                description: "Success"
-            });
+    const handleSubmit = async (event) => {
+        event.preventDefault();
+        setLocalError("");
+        if (!formState.name || !formState.email || !formState.password) {
+            setLocalError("Vui lòng điền đầy đủ thông tin.");
+            return;
+        }
+        const result = await dispatch(registerThunk(formState));
+        if (registerThunk.fulfilled.match(result)) {
             navigate("/login");
-
-        } else {
-            notification.error({
-                message: "CREATE USER",
-                description: "error"
-            })
         }
     };
 
     return (
-        <Row justify={"center"} style={{ marginTop: "30px" }}>
-            <Col xs={24} md={16} lg={8}>
-                <fieldset style={{
-                    padding: "15px",
-                    margin: "5px",
-                    border: "1px solid #ccc",
-                    borderRadius: "5px"
-                }}>
-                    <legend>Đăng Ký Tài Khoản</legend>
-                    <Form
-                        name="basic"
-                        onFinish={onFinish}
-                        autoComplete="off"
-                        layout='vertical'
-                    >
-                        <Form.Item
-                            label="Email"
-                            name="email"
-                            rules={[
-                                {
-                                    required: true,
-                                    message: 'Please input your email!',
-                                },
-                            ]}
-                        >
-                            <Input />
-                        </Form.Item>
-
-                        <Form.Item
-                            label="Password"
-                            name="password"
-                            rules={[
-                                {
-                                    required: true,
-                                    message: 'Please input your password!',
-                                },
-                            ]}
-                        >
-                            <Input.Password />
-                        </Form.Item>
-
-                        <Form.Item
-                            label="Name"
-                            name="name"
-                            rules={[
-                                {
-                                    required: true,
-                                    message: 'Please input your name!',
-                                },
-                            ]}
-                        >
-                            <Input />
-                        </Form.Item>
-
-                        <Form.Item>
-                            <Button type="primary" htmlType="submit">
-                                Submit
-                            </Button>
-                        </Form.Item>
-                    </Form>
-                    <Link to={"/"}><ArrowLeftOutlined /> Quay lai trang chu</Link>
-                    <Divider />
-                    <div style={{ textAlign: "center" }}>
-                        Đã có tài khoản? <Link to={"/login"}>Đăng nhập</Link>
+        <AuthLayout
+            title="Tạo tài khoản mới"
+            subtitle="Đăng ký để bắt đầu quản lý dự án, theo dõi tiến độ và nhận thông báo." 
+            footer={
+                <span>
+                    Đã có tài khoản?{" "}
+                    <Link className="text-reef hover:text-ink" to="/login">
+                        Đăng nhập ngay
+                    </Link>
+                </span>
+            }
+        >
+            <form onSubmit={handleSubmit} className="space-y-5">
+                <Input
+                    label="Họ và tên"
+                    name="name"
+                    value={formState.name}
+                    onChange={handleChange}
+                    placeholder="Nguyen Van A"
+                />
+                <Input
+                    label="Email"
+                    name="email"
+                    type="email"
+                    value={formState.email}
+                    onChange={handleChange}
+                    placeholder="you@email.com"
+                />
+                <Input
+                    label="Mật khẩu"
+                    name="password"
+                    type="password"
+                    value={formState.password}
+                    onChange={handleChange}
+                    placeholder="••••••••"
+                />
+                {localError || error ? (
+                    <div className="rounded-2xl border border-ember/30 bg-ember/10 px-4 py-3 text-sm text-ember">
+                        {localError || error}
                     </div>
-                </fieldset>
-            </Col>
-        </Row>
-    )
-}
+                ) : null}
+                <div className="flex flex-wrap gap-3">
+                    <Button type="submit" loading={loading} className="w-full">
+                        Tạo tài khoản
+                    </Button>
+                    <Link to="/" className="w-full">
+                        <Button variant="ghost" className="w-full">
+                            Về trang chủ
+                        </Button>
+                    </Link>
+                </div>
+            </form>
+        </AuthLayout>
+    );
+};
 
 export default RegisterPage;
