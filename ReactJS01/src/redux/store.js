@@ -6,3 +6,13 @@ export const store = configureStore({
     register: registerSlice,
   },
 });
+import { configureStore } from "@reduxjs/toolkit";
+import profileReducer from "./profileSlice";
+
+const store = configureStore({
+  reducer: {
+    profile: profileReducer,
+  },
+});
+
+export default store;

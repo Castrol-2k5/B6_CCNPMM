@@ -1,13 +1,14 @@
 import { Outlet } from "react-router-dom";
 import Header from "./components/layout/header";
-import axios from "./util/axios.customize"
-import { useContext, useEffect } from "react"
-import { AuthContext } from "./components/context/auth.context";
+import { useEffect } from "react";
 import { Spin } from "antd";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchAccountThunk } from "./Redux/authSlice";
 
 function App() {
 
-    const { setAuth, appLoading, setAppLoading } = useContext(AuthContext);
+    const dispatch = useDispatch();
+    const { appLoading } = useSelector((state) => state.auth);
 
     useEffect(() => {
         let isMounted = true;
@@ -50,6 +51,8 @@ function App() {
             isMounted = false;
         }
     }, [])
+        dispatch(fetchAccountThunk());
+    }, [dispatch]);
 
     return (
         <div>
