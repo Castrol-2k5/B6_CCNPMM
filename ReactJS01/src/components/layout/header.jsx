@@ -31,6 +31,7 @@ import { logout } from '../../Redux/authSlice';
 const Header = () => {
 
     const navigate = useNavigate();
+    const { auth, setAuth } = useContext(AuthContext);
     const dispatch = useDispatch();
     const { isAuthenticated, user } = useSelector((state) => state.auth);
     const items = [
@@ -118,6 +119,11 @@ const Header = () => {
         },
     ];
 
+    const [current, setCurrent] = useState('mail');
+    const onClick = (e) => {
+        setCurrent(e.key);
+    };
+    return <Menu onClick={onClick} selectedKeys={[current]} mode="horizontal" items={items} />;
   const [current, setCurrent] = useState("mail");
   const onClick = (e) => {
     console.log("click ", e);
