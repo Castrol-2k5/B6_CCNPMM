@@ -2,7 +2,7 @@ import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import Button from "../components/ui/Button";
-import { fetchAccountThunk, logout } from "../store/authSlice";
+import { fetchAccountThunk, logout } from "../Redux/authSlice";
 
 const ProfilePage = () => {
   const dispatch = useDispatch();

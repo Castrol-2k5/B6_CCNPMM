@@ -3,7 +3,7 @@ import { UsergroupAddOutlined, HomeOutlined, SettingOutlined } from '@ant-design
 import { Menu } from 'antd';
 import { Link, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import { logout } from '../../store/authSlice';
+import { logout } from '../../Redux/authSlice';
 
 const Header = () => {
 

@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from "react-redux";
 import AuthLayout from "../components/auth/AuthLayout";
 import Input from "../components/ui/Input";
 import Button from "../components/ui/Button";
-import { registerThunk } from "../store/authSlice";
+import { registerThunk } from "../Redux/authSlice";
 
 const RegisterPage = () => {
     const navigate = useNavigate();

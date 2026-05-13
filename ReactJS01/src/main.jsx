@@ -14,7 +14,7 @@ import LoginPage from './pages/login.jsx';
 import ForgotPasswordPage from './pages/forgot-password.jsx';
 import ProfilePage from './pages/profile.jsx';
 import { Provider } from 'react-redux';
-import store from './store/store.js';
+import store from './Redux/store.js';
 
 const router = createBrowserRouter([
     {

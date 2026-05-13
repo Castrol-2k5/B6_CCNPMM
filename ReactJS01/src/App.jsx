@@ -3,7 +3,7 @@ import Header from "./components/layout/header";
 import { useEffect } from "react";
 import { Spin } from "antd";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchAccountThunk } from "./store/authSlice";
+import { fetchAccountThunk } from "./Redux/authSlice";
 
 function App() {
 
