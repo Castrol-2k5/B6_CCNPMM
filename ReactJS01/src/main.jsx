@@ -12,6 +12,8 @@ import UserPage from './pages/user.jsx';
 import HomePage from './pages/home.jsx';
 import LoginPage from './pages/login.jsx';
 import { AuthWrapper } from './components/context/auth.context.jsx';
+import { Provider } from 'react-redux';
+import { store } from './redux/store.js';
 
 const router = createBrowserRouter([
     {
@@ -36,12 +38,18 @@ const router = createBrowserRouter([
         path: "login",
         element: <LoginPage />
     },
-]);
+], {
+    future: {
+        v7_startTransition: true
+    }
+});
 
 ReactDOM.createRoot(document.getElementById('root')).render(
     <React.StrictMode>
-        <AuthWrapper>
-            <RouterProvider router={router} />
-        </AuthWrapper>
+        <Provider store={store}>
+            <AuthWrapper>
+                <RouterProvider router={router} />
+            </AuthWrapper>
+        </Provider>
     </React.StrictMode>,
 )
