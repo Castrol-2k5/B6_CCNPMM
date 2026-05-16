@@ -1,17 +1,9 @@
-import { configureStore } from '@reduxjs/toolkit';
-import registerSlice from './registerSlice';
-
-export const store = configureStore({
-  reducer: {
-    register: registerSlice,
-  },
-});
 import { configureStore } from "@reduxjs/toolkit";
-import profileReducer from "./profileSlice";
+import authReducer from "./authSlice";
 
 const store = configureStore({
   reducer: {
-    profile: profileReducer,
+    auth: authReducer,
   },
 });
 

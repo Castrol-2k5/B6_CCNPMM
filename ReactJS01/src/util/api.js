@@ -1,39 +1,18 @@
-import axios from './axios.customize';
+import axios from "./axios.customize";
 
-const createUserApi = (name, email, password) => {
-    const URL_API = "/v1/api/register";
-    const data = {
-        name, email, password
-    }
+export const registerApi = (name, email, password) =>
+  axios.post("/v1/api/register", { name, email, password });
 
-    return axios.post(URL_API, data)
-}
+export const loginApi = (email, password) =>
+  axios.post("/v1/api/login", { email, password });
 
-const loginApi = (email, password) => {
-    const URL_API = "/v1/api/login";
-    const data = {
-        email, password
-    }
+export const getAccountApi = () => axios.get("/v1/api/account");
 
-    return axios.post(URL_API, data)
-}
+export const forgotPasswordApi = (email) =>
+  axios.post("/v1/api/forgot-password", { email });
 
-const getUserApi = () => {
-    const URL_API = "/v1/api/user";
-    return axios.get(URL_API)
-}
+export const getProductsApi = (params) =>
+  axios.get("/v1/api/products", { params });
 
-const getAccountApi = () => {
-    const URL_API = "/v1/api/account";
-    return axios.get(URL_API)
-}
-
-const forgotPasswordApi = (email) => {
-    const URL_API = "/v1/api/forgot-password";
-    const data = { email };
-    return axios.post(URL_API, data)
-}
-
-export {
-    createUserApi, loginApi, getUserApi, getAccountApi, forgotPasswordApi
-}
+export const getProductDetailApi = (slug) =>
+  axios.get(`/v1/api/products/${slug}`);

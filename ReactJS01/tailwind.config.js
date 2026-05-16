@@ -1,30 +1,16 @@
 /** @type {import('tailwindcss').Config} */
 export default {
-  content: [
-    "./index.html",
-    "./src/**/*.{js,ts,jsx,tsx}",
-  ],
-  theme: {
-    extend: {},
-  },
-  plugins: [],
-}
   content: ["./index.html", "./src/**/*.{js,jsx}"],
   theme: {
     extend: {
-      fontFamily: {
-        display: ["Playfair Display", "serif"],
-        body: ["Space Grotesk", "sans-serif"],
+      boxShadow: {
+        soft: "0 18px 48px rgba(15, 23, 42, 0.12)",
       },
       colors: {
-        ink: "#0b0d11",
-        paper: "#f4f1ed",
-        clay: "#f1e2cf",
-        reef: "#2a5757",
-        ember: "#c2531a",
-      },
-      boxShadow: {
-        glow: "0 18px 60px rgba(12, 18, 26, 0.22)",
+        sand: "#f6efe5",
+        coffee: "#42210b",
+        copper: "#b45309",
+        pine: "#164e3b",
       },
     },
   },

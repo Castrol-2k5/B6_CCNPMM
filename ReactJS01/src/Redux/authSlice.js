@@ -1,9 +1,9 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import {
-  createUserApi,
   forgotPasswordApi,
   getAccountApi,
   loginApi,
+  registerApi,
 } from "../util/api";
 
 const initialState = {
@@ -20,7 +20,7 @@ export const loginThunk = createAsyncThunk(
   "auth/login",
   async ({ email, password }, { rejectWithValue }) => {
     const res = await loginApi(email, password);
-    if (res && res.EC === 0) {
+    if (res?.EC === 0) {
       localStorage.setItem("access_token", res.access_token);
       return res;
     }
@@ -31,11 +31,11 @@ export const loginThunk = createAsyncThunk(
 export const registerThunk = createAsyncThunk(
   "auth/register",
   async ({ name, email, password }, { rejectWithValue }) => {
-    const res = await createUserApi(name, email, password);
-    if (res) {
+    const res = await registerApi(name, email, password);
+    if (res?.EC === 0) {
       return res;
     }
-    return rejectWithValue("Đăng ký thất bại.");
+    return rejectWithValue(res?.EM || "Đăng ký thất bại.");
   }
 );
 
@@ -44,13 +44,14 @@ export const fetchAccountThunk = createAsyncThunk(
   async (_, { rejectWithValue }) => {
     const token = localStorage.getItem("access_token");
     if (!token) {
-      return rejectWithValue("Chưa có token.");
+      return rejectWithValue("No token");
     }
+
     const res = await getAccountApi();
-    if (res && !res.message) {
+    if (res?.email) {
       return res;
     }
-    return rejectWithValue(res?.message || "Không thể lấy thông tin.");
+    return rejectWithValue(res?.message || "Không thể lấy thông tin tài khoản.");
   }
 );
 
@@ -58,7 +59,7 @@ export const forgotPasswordThunk = createAsyncThunk(
   "auth/forgotPassword",
   async ({ email }, { rejectWithValue }) => {
     const res = await forgotPasswordApi(email);
-    if (res && res.EC === 0) {
+    if (res?.EC === 0) {
       return res;
     }
     return rejectWithValue(res?.EM || "Không thể xử lý yêu cầu.");
@@ -77,60 +78,52 @@ const authSlice = createSlice({
       state.error = "";
       state.message = "";
     },
+    clearFeedback: (state) => {
+      state.error = "";
+      state.message = "";
+    },
   },
   extraReducers: (builder) => {
     builder
       .addCase(loginThunk.pending, (state) => {
         state.loading = true;
         state.error = "";
-        state.message = "";
       })
       .addCase(loginThunk.fulfilled, (state, action) => {
         state.loading = false;
-        state.error = "";
-        state.message = "";
         state.isAuthenticated = true;
         state.accessToken = action.payload.access_token;
         state.user = action.payload.user;
       })
       .addCase(loginThunk.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.payload || "Đăng nhập thất bại.";
-        state.message = "";
+        state.error = action.payload;
       })
       .addCase(registerThunk.pending, (state) => {
         state.loading = true;
         state.error = "";
         state.message = "";
       })
-      .addCase(registerThunk.fulfilled, (state) => {
+      .addCase(registerThunk.fulfilled, (state, action) => {
         state.loading = false;
-        state.error = "";
-        state.message = "";
+        state.message = action.payload.EM;
       })
       .addCase(registerThunk.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.payload || "Đăng ký thất bại.";
-        state.message = "";
+        state.error = action.payload;
       })
       .addCase(fetchAccountThunk.pending, (state) => {
         state.appLoading = true;
       })
       .addCase(fetchAccountThunk.fulfilled, (state, action) => {
         state.appLoading = false;
-        state.error = "";
         state.isAuthenticated = true;
-        state.user = {
-          email: action.payload.email,
-          name: action.payload.name,
-          createdBy: action.payload.createdBy,
-        };
+        state.user = action.payload;
       })
-      .addCase(fetchAccountThunk.rejected, (state, action) => {
+      .addCase(fetchAccountThunk.rejected, (state) => {
         state.appLoading = false;
         state.isAuthenticated = false;
         state.user = null;
-        state.error = action.payload || "Không thể lấy thông tin.";
         localStorage.removeItem("access_token");
       })
       .addCase(forgotPasswordThunk.pending, (state) => {
@@ -140,15 +133,14 @@ const authSlice = createSlice({
       })
       .addCase(forgotPasswordThunk.fulfilled, (state, action) => {
         state.loading = false;
-        state.error = "";
-        state.message = action.payload.EM || "Đã gửi yêu cầu.";
+        state.message = action.payload.EM;
       })
       .addCase(forgotPasswordThunk.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.payload || "Không thể xử lý yêu cầu.";
+        state.error = action.payload;
       });
   },
 });
 
-export const { logout } = authSlice.actions;
+export const { logout, clearFeedback } = authSlice.actions;
 export default authSlice.reducer;

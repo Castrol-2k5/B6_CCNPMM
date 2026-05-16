@@ -2,162 +2,120 @@ require("dotenv").config();
 const User = require("../models/user");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
+
 const saltRounds = 10;
 
 const createUserService = async (name, email, password) => {
   try {
-    //check user exist
     const user = await User.findOne({ email });
     if (user) {
-      console.log(`>>> user exist, chon 1 email khac: ${email}`);
       return null;
     }
 
-    //hash user password
     const hashPassword = await bcrypt.hash(password, saltRounds);
-    //save user to database
-    let result = await User.create({
-      name: name,
-      email: email,
+    const result = await User.create({
+      name,
+      email,
       password: hashPassword,
-      role: "User",
+      role: "member",
     });
-    return result;
+
+    return {
+      _id: result._id,
+      name: result.name,
+      email: result.email,
+      role: result.role,
+    };
   } catch (error) {
     console.log(error);
     return null;
   }
 };
 
-const loginService = async (email1, password) => {
+const loginService = async (email, password) => {
   try {
-    //fetch user by email
-    const user = await User.findOne({ email: email1 });
-    if (user) {
-      //compare password
-      const isMatchPassword = await bcrypt.compare(password, user.password);
-      if (!isMatchPassword) {
-        return {
-          EC: 2,
-          EM: "Email/Password khong hop le",
-        };
-      } else {
-        //create an access token
-        const payload = {
-          _id: user._id,
-          email: user.email,
-          name: user.name,
-        };
-
-        const access_token = jwt.sign(payload, process.env.JWT_SECRET, {
-          expiresIn: process.env.JWT_EXPIRE,
-        });
-        return {
-          EC: 0,
-          access_token,
-          user: {
-            email: user.email,
-            name: user.name,
-          },
-        };
-      }
-    } else {
+    const user = await User.findOne({ email });
+    if (!user) {
       return {
         EC: 1,
-        EM: "Email/Password khong hop le",
+          EM: "Email/Mật khẩu không hợp lệ",
       };
     }
+
+    const isMatchPassword = await bcrypt.compare(password, user.password);
+    if (!isMatchPassword) {
+      return {
+        EC: 2,
+          EM: "Email/Mật khẩu không hợp lệ",
+      };
+    }
+
+    const payload = {
+      _id: user._id,
+      email: user.email,
+      name: user.name,
+      role: user.role || "member",
+    };
+
+    const access_token = jwt.sign(payload, process.env.JWT_SECRET, {
+      expiresIn: process.env.JWT_EXPIRE,
+    });
+
+    return {
+      EC: 0,
+      EM: "Đăng nhập thành công",
+      access_token,
+      user: {
+        _id: user._id,
+        email: user.email,
+        name: user.name,
+        role: user.role || "member",
+      },
+    };
   } catch (error) {
     console.log(error);
-    return null;
+    return {
+      EC: 99,
+      EM: "Có lỗi xảy ra khi đăng nhập",
+    };
   }
 };
 
 const getUserService = async () => {
   try {
-    let result = await User.find({}).select("-password");
-    return result;
+    return await User.find({}).select("-password");
   } catch (error) {
     console.log(error);
     return null;
   }
 };
 
-const getProfileService = async (userId) => {
-  try {
-    const user = await User.findById(userId).select("-password");
-    if (!user) {
-      return {
-        EC: 1,
-        EM: "User not found",
-      };
-    }
-    return {
-      EC: 0,
-      data: user,
-    };
-  } catch (error) {
-    console.log(error);
-    return {
-      EC: 1,
-      EM: "Error fetching profile",
-    };
-  }
-};
-
-const updateProfileService = async (userId, updateData) => {
-  try {
-    const user = await User.findByIdAndUpdate(userId, updateData, {
-      new: true,
-    }).select("-password");
-    if (!user) {
-      return {
-        EC: 1,
-        EM: "User not found",
-      };
-    }
-    return {
-      EC: 0,
-      EM: "Profile updated successfully",
-      data: user,
-    };
-  } catch (error) {
-    console.log(error);
-    return {
-      EC: 1,
-      EM: "Error updating profile",
-    };
-  }
-};
-
 const forgotPasswordService = async (email) => {
-    try {
-        const user = await User.findOne({ email });
-        if (!user) {
-            return {
-                EC: 1,
-                EM: "Email khong ton tai"
-            };
-        }
-        return {
-            EC: 0,
-            EM: "Yeu cau khoi phuc da duoc ghi nhan"
-        };
-    } catch (error) {
-        console.log(error);
-        return {
-            EC: 2,
-            EM: "Co loi xay ra"
-        };
+  try {
+    const user = await User.findOne({ email });
+    if (!user) {
+      return {
+        EC: 1,
+        EM: "Email không tồn tại",
+      };
     }
-}
+
+    return {
+      EC: 0,
+      EM: "Yêu cầu khôi phục đã được ghi nhận",
+    };
+  } catch (error) {
+    console.log(error);
+    return {
+      EC: 2,
+      EM: "Có lỗi xảy ra",
+    };
+  }
+};
 
 module.exports = {
   createUserService,
   loginService,
   getUserService,
-  getProfileService,
-  updateProfileService,
+  forgotPasswordService,
 };
-    createUserService, loginService, getUserService, forgotPasswordService
-}
