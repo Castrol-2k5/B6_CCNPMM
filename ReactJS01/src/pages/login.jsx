@@ -34,12 +34,12 @@ const LoginPage = () => {
   return (
     <div className="flex min-h-screen items-center justify-center bg-[linear-gradient(135deg,#42210b_0%,#14532d_100%)] px-4 py-10">
       <div className="grid w-full max-w-5xl overflow-hidden rounded-[32px] bg-white shadow-soft lg:grid-cols-[1fr_420px]">
-        <div className="hidden p-10 text-white lg:block">
-          <p className="text-sm uppercase tracking-[0.35em] text-amber-200">Castrol Gear</p>
-          <h1 className="mt-5 text-4xl font-black leading-tight">
+        <div className="hidden bg-black/10 p-10 text-white lg:block">
+          <p className="inline-flex rounded-full bg-white/12 px-4 py-2 text-sm font-semibold uppercase tracking-[0.35em] text-yellow-100 shadow-sm ring-1 ring-white/20">Castrol Gear</p>
+          <h1 className="mt-5 text-4xl font-black leading-tight text-sand drop-shadow-[0_3px_12px_rgba(0,0,0,0.35)]">
             Đăng nhập thành viên để vào trang chủ bán chuột và bàn phím.
           </h1>
-          <p className="mt-4 max-w-md text-sm text-amber-50/80">
+          <p className="mt-4 max-w-md text-sm leading-7 text-white/90">
             Sau khi đăng nhập thành công, hệ thống hiển thị khuyến mãi, sản phẩm mới nhất, bán chạy nhất và thông tin tài khoản.
           </p>
         </div>
