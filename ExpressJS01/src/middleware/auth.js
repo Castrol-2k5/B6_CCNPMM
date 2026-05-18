@@ -1,30 +1,63 @@
 require("dotenv").config();
 const jwt = require("jsonwebtoken");
 
+const normalizeRole = (role) => {
+  if (!role || role === "member") {
+    return "user";
+  }
+
+  return role;
+};
+
 const auth = (req, res, next) => {
   const token = req?.headers?.authorization?.split(" ")?.[1];
 
   if (!token) {
     return res.status(401).json({
-      message: "Bạn chưa truyền Access Token ở header hoặc token bị hết hạn",
+      EC: 1,
+      EM: "Authentication token is required.",
     });
   }
 
   try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const decoded = jwt.verify(token, process.env.JWT_SECRET, {
+      algorithms: ["HS256"],
+    });
     req.user = {
       _id: decoded._id,
       email: decoded.email,
       name: decoded.name,
-      role: decoded.role || "member",
-      createdBy: "hoidanit",
+      role: normalizeRole(decoded.role),
     };
     next();
   } catch (error) {
     return res.status(401).json({
-      message: "Token bị hết hạn hoặc không hợp lệ",
+      EC: 1,
+      EM: "Token expired or invalid.",
     });
   }
 };
 
-module.exports = auth;
+const authorizeRoles = (...allowedRoles) => (req, res, next) => {
+  if (!req.user) {
+    return res.status(401).json({
+      EC: 1,
+      EM: "Ban chua dang nhap",
+    });
+  }
+
+  if (!allowedRoles.includes(req.user.role)) {
+    return res.status(403).json({
+      EC: 1,
+      EM: "Ban khong co quyen truy cap chuc nang nay",
+    });
+  }
+
+  next();
+};
+
+module.exports = {
+  auth,
+  authorizeRoles,
+  normalizeRole,
+};

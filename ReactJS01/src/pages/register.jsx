@@ -38,9 +38,10 @@ const RegisterPage = () => {
     <div className="flex min-h-screen items-center justify-center bg-[linear-gradient(135deg,#fff7ed_0%,#dcfce7_100%)] px-4 py-10">
       <div className="w-full max-w-xl rounded-[32px] bg-white p-8 shadow-soft sm:p-10">
         <p className="text-sm uppercase tracking-[0.25em] text-copper">Đăng ký</p>
-        <h1 className="mt-3 text-3xl font-black text-coffee">Tạo tài khoản thành viên</h1>
+        <h1 className="mt-3 text-3xl font-black text-coffee">Tạo tài khoản user</h1>
         <p className="mt-3 text-sm text-slate-600">
-          Đăng ký để đăng nhập vào trang chủ và xem các khuyến mãi dành riêng cho thành viên.
+          Tài khoản đăng ký mới mặc định sẽ có role `user`. Nếu cần `admin` hoặc `manager`, bạn có thể đổi role
+          trong MongoDB.
         </p>
         <form onSubmit={handleSubmit} className="mt-8 space-y-4">
           <input

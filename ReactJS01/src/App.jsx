@@ -1,16 +1,9 @@
 import { Outlet } from "react-router-dom";
-import { useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import Header from "./components/layout/header";
-import { fetchAccountThunk } from "./Redux/authSlice";
 
 function App() {
-  const dispatch = useDispatch();
   const { appLoading } = useSelector((state) => state.auth);
-
-  useEffect(() => {
-    dispatch(fetchAccountThunk());
-  }, [dispatch]);
 
   if (appLoading) {
     return (
@@ -23,7 +16,7 @@ function App() {
   }
 
   return (
-    <div className="min-h-screen bg-sand text-slate-900">
+    <div className="min-h-screen overflow-x-hidden bg-sand text-slate-900">
       <Header />
       <Outlet />
     </div>

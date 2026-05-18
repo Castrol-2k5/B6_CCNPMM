@@ -14,9 +14,13 @@ const Header = () => {
     { label: "Mới nhất", to: "/?featured=new" },
   ];
 
+  if (user?.role === "admin") {
+    navItems.push({ label: "Quản lý", to: "/admin" });
+  }
+
   const handleLogout = () => {
     dispatch(logout());
-    navigate("/");
+    navigate("/login");
   };
 
   return (
@@ -28,26 +32,33 @@ const Header = () => {
           </div>
           <div>
             <p className="text-lg font-bold text-coffee">Castrol Gear</p>
-            <p className="text-xs text-slate-500">Cửa hàng chuột và bàn phím</p>
+            <p className="text-xs text-slate-500">Cua hang chuot va ban phim</p>
           </div>
         </Link>
 
         <nav className="hidden gap-6 md:flex">
-          {navItems.map((item) => (
-            <Link
-              key={item.label}
-              to={item.to}
-              className={`text-sm font-medium transition ${
-                location.pathname === "/" && location.search === item.to.replace("/", "")
-                  ? "text-coffee"
-                  : item.to === "/" && location.pathname === "/"
-                    ? "text-coffee"
-                    : "text-slate-600 hover:text-coffee"
-              }`}
-            >
-              {item.label}
-            </Link>
-          ))}
+          {navItems.map((item) => {
+            const isActive =
+              item.to === "/profile"
+                ? location.pathname === "/profile"
+                : item.to === "/"
+                  ? location.pathname === "/" && !location.search
+                  : item.to.includes("?")
+                    ? `${location.pathname}${location.search}` === item.to
+                    : location.pathname === item.to;
+
+            return (
+              <Link
+                key={item.label}
+                to={item.to}
+                className={`text-sm font-medium transition ${
+                  isActive ? "text-coffee" : "text-slate-600 hover:text-coffee"
+                }`}
+              >
+                {item.label}
+              </Link>
+            );
+          })}
         </nav>
 
         <div className="flex items-center gap-3">
@@ -56,9 +67,16 @@ const Header = () => {
               <div className="hidden rounded-full border border-pine/20 bg-pine/10 px-4 py-2 text-sm text-pine sm:block">
                 {user?.name || user?.email}
                 <span className="ml-2 rounded-full bg-white px-2 py-1 text-xs uppercase">
-                  {user?.role || "member"}
+                  {user?.role || "user"}
                 </span>
               </div>
+              <button
+                type="button"
+                onClick={() => navigate("/profile")}
+                className="rounded-full border border-coffee/15 px-4 py-2 text-sm font-semibold text-coffee transition hover:border-coffee hover:bg-coffee hover:text-white"
+              >
+                Thông tin thành viên
+              </button>
               <button
                 type="button"
                 onClick={handleLogout}

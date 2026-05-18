@@ -7,7 +7,7 @@ export const registerUser = createAsyncThunk(
     const response = await createUserApi(name, email, password);
 
     if (!response) {
-      return rejectWithValue('Dang ky that bai hoac email da ton tai.');
+      return rejectWithValue('Đăng ký thất bại hoặc email đã tồn tại.');
     }
 
     if (response.message) {
@@ -51,7 +51,7 @@ const registerSlice = createSlice({
       .addCase(registerUser.rejected, (state, action) => {
         state.loading = false;
         state.success = false;
-        state.error = action.payload || action.error.message || 'Dang ky that bai';
+        state.error = action.payload || action.error.message || 'Đăng ký thất bại';
       });
   },
 });

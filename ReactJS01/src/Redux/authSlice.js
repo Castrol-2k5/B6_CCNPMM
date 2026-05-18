@@ -25,7 +25,7 @@ export const loginThunk = createAsyncThunk(
       return res;
     }
     return rejectWithValue(res?.EM || "Đăng nhập thất bại.");
-  }
+  },
 );
 
 export const registerThunk = createAsyncThunk(
@@ -36,7 +36,7 @@ export const registerThunk = createAsyncThunk(
       return res;
     }
     return rejectWithValue(res?.EM || "Đăng ký thất bại.");
-  }
+  },
 );
 
 export const fetchAccountThunk = createAsyncThunk(
@@ -51,8 +51,8 @@ export const fetchAccountThunk = createAsyncThunk(
     if (res?.email) {
       return res;
     }
-    return rejectWithValue(res?.message || "Không thể lấy thông tin tài khoản.");
-  }
+    return rejectWithValue(res?.EM || res?.message || "Không thể lấy thông tin tài khoản.");
+  },
 );
 
 export const forgotPasswordThunk = createAsyncThunk(
@@ -63,7 +63,7 @@ export const forgotPasswordThunk = createAsyncThunk(
       return res;
     }
     return rejectWithValue(res?.EM || "Không thể xử lý yêu cầu.");
-  }
+  },
 );
 
 const authSlice = createSlice({
@@ -81,6 +81,10 @@ const authSlice = createSlice({
     clearFeedback: (state) => {
       state.error = "";
       state.message = "";
+    },
+    setUser: (state, action) => {
+      state.user = action.payload;
+      state.isAuthenticated = true;
     },
   },
   extraReducers: (builder) => {
@@ -142,5 +146,5 @@ const authSlice = createSlice({
   },
 });
 
-export const { logout, clearFeedback } = authSlice.actions;
+export const { logout, clearFeedback, setUser } = authSlice.actions;
 export default authSlice.reducer;

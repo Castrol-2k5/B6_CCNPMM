@@ -9,20 +9,60 @@ import LoginPage from "./pages/login";
 import RegisterPage from "./pages/register";
 import ForgotPasswordPage from "./pages/forgot-password";
 import ProductDetailPage from "./pages/product-detail";
+import ProfilePage from "./pages/profile";
+import AdminLayout from "./pages/admin/AdminLayout";
+import AdminDashboard from "./pages/admin/AdminDashboard";
+import AdminUsersPage from "./pages/admin/AdminUsersPage";
+import AdminProductsPage from "./pages/admin/AdminProductsPage";
+import ProtectedRoute from "./components/auth/ProtectedRoute";
+import RoleRoute from "./components/auth/RoleRoute";
 import "./styles/global.css";
 
 const router = createBrowserRouter([
   {
-    path: "/",
-    element: <App />,
+    element: <ProtectedRoute />,
     children: [
       {
-        index: true,
-        element: <HomePage />,
-      },
-      {
-        path: "products/:slug",
-        element: <ProductDetailPage />,
+        path: "/",
+        element: <App />,
+        children: [
+          {
+            index: true,
+            element: <HomePage />,
+          },
+          {
+            path: "products/:slug",
+            element: <ProductDetailPage />,
+          },
+          {
+            path: "profile",
+            element: <ProfilePage />,
+          },
+          {
+            path: "admin",
+            element: <RoleRoute allowedRoles={["admin"]} />,
+            children: [
+              {
+                path: "",
+                element: <AdminLayout />,
+                children: [
+                  {
+                    index: true,
+                    element: <AdminDashboard />,
+                  },
+                  {
+                    path: "users",
+                    element: <AdminUsersPage />,
+                  },
+                  {
+                    path: "products",
+                    element: <AdminProductsPage />,
+                  },
+                ],
+              },
+            ],
+          },
+        ],
       },
     ],
   },
@@ -45,5 +85,5 @@ ReactDOM.createRoot(document.getElementById("root")).render(
     <Provider store={store}>
       <RouterProvider router={router} />
     </Provider>
-  </React.StrictMode>
+  </React.StrictMode>,
 );

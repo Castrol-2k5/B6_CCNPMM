@@ -1,10 +1,11 @@
 import { useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { clearFeedback, loginThunk } from "../Redux/authSlice";
 
 const LoginPage = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const dispatch = useDispatch();
   const { loading, error, isAuthenticated } = useSelector((state) => state.auth);
   const [formState, setFormState] = useState({ email: "", password: "" });
@@ -16,9 +17,9 @@ const LoginPage = () => {
 
   useEffect(() => {
     if (isAuthenticated) {
-      navigate("/");
+      navigate(location.state?.from?.pathname || "/");
     }
-  }, [isAuthenticated, navigate]);
+  }, [isAuthenticated, navigate, location.state]);
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -37,15 +38,20 @@ const LoginPage = () => {
         <div className="hidden bg-black/10 p-10 text-white lg:block">
           <p className="inline-flex rounded-full bg-white/12 px-4 py-2 text-sm font-semibold uppercase tracking-[0.35em] text-yellow-100 shadow-sm ring-1 ring-white/20">Castrol Gear</p>
           <h1 className="mt-5 text-4xl font-black leading-tight text-sand drop-shadow-[0_3px_12px_rgba(0,0,0,0.35)]">
-            Đăng nhập thành viên để vào trang chủ bán chuột và bàn phím.
+            Đăng nhập vào hệ thống có phân quyền admin, manager và user.
           </h1>
           <p className="mt-4 max-w-md text-sm leading-7 text-white/90">
-            Sau khi đăng nhập thành công, hệ thống hiển thị khuyến mãi, sản phẩm mới nhất, bán chạy nhất và thông tin tài khoản.
+            Sau khi đăng nhập thành công, người dùng có role hợp lệ mới vào được trang chủ và trang hồ sơ.
           </p>
         </div>
         <div className="p-8 sm:p-10">
           <p className="text-sm uppercase tracking-[0.25em] text-copper">Đăng nhập</p>
           <h2 className="mt-3 text-3xl font-black text-coffee">Chào mừng quay lại</h2>
+          {location.state?.unauthorized ? (
+            <div className="mt-6 rounded-2xl bg-amber-50 px-4 py-3 text-sm text-amber-700">
+              Tài khoản của bạn không có role hợp lệ để vào hệ thống.
+            </div>
+          ) : null}
           <form onSubmit={handleSubmit} className="mt-8 space-y-4">
             <input
               type="email"
@@ -58,7 +64,7 @@ const LoginPage = () => {
             <input
               type="password"
               name="password"
-              placeholder="Mật khẩu"
+              placeholder="Mat khau"
               value={formState.password}
               onChange={(e) => setFormState({ ...formState, password: e.target.value })}
               className="w-full rounded-2xl border border-coffee/10 px-4 py-3 outline-none transition focus:border-coffee"

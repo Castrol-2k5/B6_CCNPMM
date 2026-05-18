@@ -1,11 +1,30 @@
 const mongoose = require("mongoose");
 
+const allowedRoles = ["admin", "manager", "user"];
+
 const userSchema = new mongoose.Schema(
   {
-    name: String,
-    email: String,
-    password: String,
-    role: String,
+    name: {
+      type: String,
+      required: true,
+      trim: true,
+    },
+    email: {
+      type: String,
+      required: true,
+      unique: true,
+      trim: true,
+      lowercase: true,
+    },
+    password: {
+      type: String,
+      required: true,
+    },
+    role: {
+      type: String,
+      enum: allowedRoles,
+      default: "user",
+    },
     phone: {
       type: String,
       default: "",
@@ -31,18 +50,13 @@ const userSchema = new mongoose.Schema(
       enum: ["Male", "Female", "Other"],
       default: "Other",
     },
-    createdAt: {
-      type: Date,
-      default: Date.now,
-    },
-    updatedAt: {
-      type: Date,
-      default: Date.now,
-    },
   },
   { timestamps: true },
 );
 
 const User = mongoose.model("user", userSchema);
 
-module.exports = User;
+module.exports = {
+  User,
+  allowedRoles,
+};

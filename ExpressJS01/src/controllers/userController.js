@@ -2,6 +2,8 @@ const {
   createUserService,
   loginService,
   getUserService,
+  getProfileService,
+  updateProfileService,
   forgotPasswordService,
 } = require("../services/userService");
 
@@ -12,13 +14,13 @@ const createUser = async (req, res) => {
   if (!data) {
     return res.status(400).json({
       EC: 1,
-      EM: "Không thể tạo tài khoản. Email có thể đã tồn tại.",
+      EM: "Khong the tao tai khoan. Email co the da ton tai.",
     });
   }
 
   return res.status(200).json({
     EC: 0,
-    EM: "Tạo tài khoản thành công",
+    EM: "Tao tai khoan thanh cong",
     data,
   });
 };
@@ -35,7 +37,49 @@ const getUser = async (req, res) => {
 };
 
 const getAccount = async (req, res) => {
-  return res.status(200).json(req.user);
+  const profile = await getProfileService(req.user._id);
+
+  if (!profile) {
+    return res.status(404).json({
+      EC: 1,
+      EM: "Khong tim thay tai khoan",
+    });
+  }
+
+  return res.status(200).json(profile);
+};
+
+const getProfile = async (req, res) => {
+  const profile = await getProfileService(req.user._id);
+
+  if (!profile) {
+    return res.status(404).json({
+      EC: 1,
+      EM: "Khong tim thay ho so",
+    });
+  }
+
+  return res.status(200).json({
+    EC: 0,
+    data: profile,
+  });
+};
+
+const updateProfile = async (req, res) => {
+  const updatedProfile = await updateProfileService(req.user._id, req.body);
+
+  if (!updatedProfile) {
+    return res.status(400).json({
+      EC: 1,
+      EM: "Khong the cap nhat ho so",
+    });
+  }
+
+  return res.status(200).json({
+    EC: 0,
+    EM: "Cap nhat ho so thanh cong",
+    data: updatedProfile,
+  });
 };
 
 const forgotPassword = async (req, res) => {
@@ -49,5 +93,7 @@ module.exports = {
   handleLogin,
   getUser,
   getAccount,
+  getProfile,
+  updateProfile,
   forgotPassword,
 };
