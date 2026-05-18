@@ -5,7 +5,7 @@ const configViewEngine = require("./config/viewEngine");
 const apiRoutes = require("./routes/api");
 const connection = require("./config/database");
 const { getHomepage } = require("./controllers/homeController");
-const { seedAdminIfNeeded } = require("./services/adminService");
+const { seedAdminIfNeeded, seedDemoUserIfNeeded } = require("./services/adminService");
 const { corsOptions, setSecurityHeaders, enforceHttps } = require("./middleware/security");
 const { apiLimiter } = require("./middleware/rateLimiter");
 
@@ -34,6 +34,7 @@ app.use("/v1/api/", apiRoutes);
   try {
     await connection();
     await seedAdminIfNeeded();
+    await seedDemoUserIfNeeded();
 
     app.listen(port, () => {
       console.log(`Backend Nodejs App listening on port ${port}`);

@@ -33,8 +33,8 @@ const registerRules = [
     .trim()
     .notEmpty()
     .withMessage("Password is required")
-    .isLength({ min: 8, max: 100 })
-    .withMessage("Password must be at least 8 characters"),
+    .isLength({ min: 6, max: 100 })
+    .withMessage("Password must be at least 6 characters"),
 ];
 
 const loginRules = [
@@ -49,8 +49,8 @@ const loginRules = [
     .trim()
     .notEmpty()
     .withMessage("Password is required")
-    .isLength({ min: 8, max: 100 })
-    .withMessage("Password must be at least 8 characters"),
+    .isLength({ min: 6, max: 100 })
+    .withMessage("Password must be at least 6 characters"),
 ];
 
 const forgotPasswordRules = [

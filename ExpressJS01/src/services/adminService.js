@@ -170,6 +170,29 @@ const seedAdminIfNeeded = async () => {
   return createdAdmin;
 };
 
+const seedDemoUserIfNeeded = async () => {
+  const userEmail = process.env.DEMO_USER_EMAIL || "user@gear.local";
+  const userPassword = process.env.DEMO_USER_PASSWORD || "user123";
+
+  const normalizedEmail = userEmail.trim().toLowerCase();
+  const existingUser = await User.findOne({ email: normalizedEmail });
+  if (existingUser) {
+    return existingUser;
+  }
+
+  const hashPassword = await bcrypt.hash(userPassword, saltRounds);
+
+  const createdUser = await User.create({
+    name: "Demo User",
+    email: normalizedEmail,
+    password: hashPassword,
+    role: "user",
+  });
+
+  console.log(`Seeded demo user: ${normalizedEmail}`);
+  return createdUser;
+};
+
 module.exports = {
   getAllUsers,
   updateUserRole,
@@ -179,4 +202,5 @@ module.exports = {
   updateProduct,
   deleteProduct,
   seedAdminIfNeeded,
+  seedDemoUserIfNeeded,
 };

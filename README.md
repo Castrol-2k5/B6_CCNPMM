@@ -45,6 +45,17 @@ Lệnh này sẽ tạo/cập nhật dữ liệu mẫu sản phẩm trong MongoDB
 - top 10 bán chạy
 - top 10 xem nhiều
 
+## Tài khoản mẫu
+
+Backend tự seed sẵn 2 tài khoản mẫu khi chạy:
+
+- `Admin`
+  - Email: `admin@gear.local`
+  - Password: `admin123`
+- `User`
+  - Email: `user@gear.local`
+  - Password: `user123`
+
 ### 3. Chạy backend
 
 ```bash
@@ -102,4 +113,3 @@ Nếu không chạy `npm run seed`, phần sản phẩm trong database có thể
 ## Ghi chú
 
 - File seed nằm tại `ExpressJS01/seed/seedProducts.js`
-
