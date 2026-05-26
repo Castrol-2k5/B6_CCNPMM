@@ -5,6 +5,7 @@ const AdminLayout = () => {
     { label: "Tổng quan", to: "/admin" },
     { label: "Người dùng", to: "/admin/users" },
     { label: "Sản phẩm", to: "/admin/products" },
+    { label: "Đơn hàng", to: "/admin/orders" },
   ];
 
   return (
@@ -15,7 +16,7 @@ const AdminLayout = () => {
             <p className="text-xs uppercase tracking-[0.3em] text-copper">Khu vực quản trị</p>
             <h1 className="mt-2 text-3xl font-black text-coffee">Trang quản lý Admin</h1>
             <p className="mt-2 max-w-2xl text-sm text-slate-600">
-              Tại đây admin có thể quản lý người dùng và sản phẩm. Mỗi thay đổi sẽ được lưu trên database.
+              Tại đây admin có thể quản lý người dùng, sản phẩm và đơn hàng của hệ thống.
             </p>
           </div>
           <div className="flex flex-wrap gap-3">

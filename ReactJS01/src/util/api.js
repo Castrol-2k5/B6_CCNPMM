@@ -35,3 +35,28 @@ export const createAdminProductApi = (payload) =>
 export const updateAdminProductApi = (id, payload) =>
   axios.put(`/v1/api/admin/products/${id}`, payload);
 export const deleteAdminProductApi = (id) => axios.delete(`/v1/api/admin/products/${id}`);
+
+// Cart APIs
+export const getCartApi = () => axios.get("/v1/api/cart");
+export const addToCartApi = (productId, quantity) =>
+  axios.post("/v1/api/cart", { productId, quantity });
+export const updateCartItemApi = (productId, quantity) =>
+  axios.put(`/v1/api/cart/items/${productId}`, { quantity });
+export const removeCartItemApi = (productId) =>
+  axios.delete(`/v1/api/cart/items/${productId}`);
+
+// Order APIs
+export const createOrderApi = (shippingAddress, paymentMethod) =>
+  axios.post("/v1/api/orders", { shippingAddress, paymentMethod });
+export const getOrdersHistoryApi = () => axios.get("/v1/api/orders");
+export const getOrderDetailApi = (id) => axios.get(`/v1/api/orders/${id}`);
+export const cancelOrderApi = (id, reason) =>
+  axios.post(`/v1/api/orders/${id}/cancel`, { reason });
+
+// Admin Order APIs
+export const getAdminOrdersApi = () => axios.get("/v1/api/admin/orders");
+export const updateOrderStatusByAdminApi = (id, status) =>
+  axios.put(`/v1/api/admin/orders/${id}/status`, { status });
+export const handleCancelRequestByAdminApi = (id, action) =>
+  axios.put(`/v1/api/admin/orders/${id}/cancel-request`, { action });
+

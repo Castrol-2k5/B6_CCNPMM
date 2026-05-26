@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
-import { Link, useParams } from "react-router-dom";
+import { Link, useParams, useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
 import { getProductDetailApi } from "../util/api";
+import { addToCartThunk } from "../Redux/cartSlice";
 
 const formatCurrency = (value) =>
   new Intl.NumberFormat("vi-VN", {
@@ -10,9 +12,41 @@ const formatCurrency = (value) =>
 
 const ProductDetailPage = () => {
   const { slug } = useParams();
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const { isAuthenticated } = useSelector((state) => state.auth);
+
   const [product, setProduct] = useState(null);
   const [activeImage, setActiveImage] = useState(0);
   const [quantity, setQuantity] = useState(1);
+  const [adding, setAdding] = useState(false);
+  const [feedback, setFeedback] = useState({ type: "", msg: "" });
+
+  const handleAddToCart = async () => {
+    if (!isAuthenticated) {
+      setFeedback({ type: "error", msg: "Vui lòng đăng nhập trước khi mua hàng!" });
+      setTimeout(() => navigate("/login"), 1500);
+      return;
+    }
+    setAdding(false);
+    setFeedback({ type: "", msg: "" });
+
+    if (product.stock < 1) {
+      setFeedback({ type: "error", msg: "Sản phẩm hiện đang tạm hết hàng!" });
+      return;
+    }
+
+    setAdding(true);
+    const resultAction = await dispatch(addToCartThunk({ productId: product._id, quantity }));
+    setAdding(false);
+
+    if (addToCartThunk.fulfilled.match(resultAction)) {
+      setFeedback({ type: "success", msg: "Thêm vào giỏ hàng thành công!" });
+      setTimeout(() => setFeedback({ type: "", msg: "" }), 3000);
+    } else {
+      setFeedback({ type: "error", msg: resultAction.payload || "Lỗi khi thêm sản phẩm." });
+    }
+  };
 
   useEffect(() => {
     const fetchDetail = async () => {
@@ -157,11 +191,25 @@ const ProductDetailPage = () => {
               </div>
               <button
                 type="button"
-                className="rounded-full bg-coffee px-6 py-3 text-sm font-bold text-white transition hover:bg-copper"
+                onClick={handleAddToCart}
+                disabled={adding || product.stock < 1}
+                className="rounded-full bg-coffee px-6 py-3 text-sm font-bold text-white transition hover:bg-copper disabled:opacity-50"
               >
-                Thêm vào giỏ
+                {adding ? "Đang thêm..." : product.stock < 1 ? "Hết hàng" : "Thêm vào giỏ"}
               </button>
             </div>
+
+            {feedback.msg && (
+              <div
+                className={`mt-4 rounded-2xl px-4 py-2 text-sm font-medium ${
+                  feedback.type === "success"
+                    ? "bg-emerald-100 text-emerald-800 border border-emerald-200"
+                    : "bg-rose-100 text-rose-800 border border-rose-200"
+                }`}
+              >
+                {feedback.msg}
+              </div>
+            )}
 
             <div className="mt-6 rounded-[24px] bg-[linear-gradient(135deg,#fff7ed_0%,#ecfccb_100%)] p-5">
               <p className="text-sm font-semibold text-copper">Khuyến mãi hiện tại</p>

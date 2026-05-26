@@ -49,53 +49,8 @@ const enforceHttps = (req, res, next) => {
   return next();
 };
 
-const createRateLimiter = ({ windowMs, max, message }) => {
-  const cache = new Map();
-
-  return (req, res, next) => {
-    const now = Date.now();
-    const key = req.ip || req.connection.remoteAddress || "unknown";
-    const entry = cache.get(key) || { count: 0, resetAt: now + windowMs };
-
-    if (now > entry.resetAt) {
-      entry.count = 0;
-      entry.resetAt = now + windowMs;
-    }
-
-    entry.count += 1;
-    cache.set(key, entry);
-
-    res.set("X-RateLimit-Limit", String(max));
-    res.set("X-RateLimit-Remaining", String(Math.max(max - entry.count, 0)));
-    res.set("X-RateLimit-Reset", String(Math.ceil((entry.resetAt - now) / 1000)));
-
-    if (entry.count > max) {
-      return res.status(429).json({
-        EC: 1,
-        EM: message || "Too many requests, please try again later.",
-      });
-    }
-
-    return next();
-  };
-};
-
-const authRateLimiter = createRateLimiter({
-  windowMs: 15 * 60 * 1000,
-  max: 8,
-  message: "Too many authentication attempts, please wait and try again.",
-});
-
-const generalRateLimiter = createRateLimiter({
-  windowMs: 60 * 60 * 1000,
-  max: 200,
-  message: "Too many requests from this IP, please try again later.",
-});
-
 module.exports = {
   corsOptions,
   setSecurityHeaders,
   enforceHttps,
-  authRateLimiter,
-  generalRateLimiter,
 };

@@ -33,6 +33,21 @@ const {
 } = require("../middleware/validation");
 const { authLimiter } = require("../middleware/rateLimiter");
 const delay = require("../middleware/delay");
+const {
+  getCart,
+  addToCart,
+  updateCartItem,
+  removeCartItem,
+} = require("../controllers/cartController");
+const {
+  createOrder,
+  getOrders,
+  getOrderDetail,
+  cancelOrder,
+  getAdminOrders,
+  updateOrderStatusByAdmin,
+  handleCancelRequestByAdmin,
+} = require("../controllers/orderController");
 
 const routerAPI = express.Router();
 
@@ -64,5 +79,22 @@ routerAPI.get("/admin/products", authorizeRoles("admin"), getAdminProducts);
 routerAPI.post("/admin/products", authorizeRoles("admin"), createAdminProduct);
 routerAPI.put("/admin/products/:id", authorizeRoles("admin"), updateAdminProduct);
 routerAPI.delete("/admin/products/:id", authorizeRoles("admin"), deleteAdminProduct);
+
+// Cart Routes
+routerAPI.get("/cart", getCart);
+routerAPI.post("/cart", addToCart);
+routerAPI.put("/cart/items/:productId", updateCartItem);
+routerAPI.delete("/cart/items/:productId", removeCartItem);
+
+// Order Routes
+routerAPI.post("/orders", createOrder);
+routerAPI.get("/orders", getOrders);
+routerAPI.get("/orders/:id", getOrderDetail);
+routerAPI.post("/orders/:id/cancel", cancelOrder);
+
+// Admin Order Routes
+routerAPI.get("/admin/orders", authorizeRoles("admin"), getAdminOrders);
+routerAPI.put("/admin/orders/:id/status", authorizeRoles("admin"), updateOrderStatusByAdmin);
+routerAPI.put("/admin/orders/:id/cancel-request", authorizeRoles("admin"), handleCancelRequestByAdmin);
 
 module.exports = routerAPI;
